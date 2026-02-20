@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Piedra Papel Tijera</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; background: #1a1a2e; color: white; }
+    h1 { color: #e94560; }
+    button { font-size: 40px; margin: 10px; padding: 15px; cursor: pointer; border: none; border-radius: 10px; background: #16213e; }
+    button:hover { background: #e94560; }
+    #resultado { font-size: 30px; margin-top: 30px; }
+    #marcador { font-size: 20px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Piedra, Papel o Tijera</h1>
+  <p>Elegí tu jugada:</p>
+  <button onclick="jugar('piedra')">🪨</button>
+  <button onclick="jugar('papel')">📄</button>
+  <button onclick="jugar('tijera')">✂️</button>
+
+  <div id="resultado"></div>
+  <div id="marcador">Victorias: 0 | Derrotas: 0 | Empates: 0</div>
+
+  <script>
+    let victorias = 0, derrotas = 0, empates = 0;
+    const opciones = ['piedra', 'papel', 'tijera'];
+    const emojis = { piedra: '🪨', papel: '📄', tijera: '✂️' };
+
+    function jugar(jugador) {
+      const pc = opciones[Math.floor(Math.random() * 3)];
+      let msg = `Vos: ${emojis[jugador]} vs PC: ${emojis[pc]}<br>`;
+
+      if (jugador === pc) { msg += '😐 ¡Empate!'; empates++; }
+      else if ((jugador==='piedra'&&pc==='tijera') || (jugador==='papel'&&pc==='piedra') || (jugador==='tijera'&&pc==='papel')) {
+        msg += '🎉 ¡Ganaste!'; victorias++;
+      } else { msg += '😢 ¡Perdiste!'; derrotas++; }
+
+      document.getElementById('resultado').innerHTML = msg;
+      document.getElementById('marcador').textContent = `Victorias: ${victorias} | Derrotas: ${derrotas} | Empates: ${empates}`;
+    }
+  </script>
+</body>
+</html>
