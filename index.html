@@ -7,367 +7,102 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --rojo: #ff2d55;
-    --rosa: #ff6b95;
-    --morado: #7c2d8c;
-    --dorado: #ffd166;
-    --fuego: #ff4d00;
-    --negro: #0a0007;
-    --gris: #1a0a14;
-  }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    background: var(--negro);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    padding: 20px;
-    overflow-x: hidden;
-  }
-
-  /* Fondo animado */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124,45,140,0.25) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(255,45,85,0.2) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,77,0,0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
+  :root { --rojo: #ff2d55; --rosa: #ff6b95; --morado: #7c2d8c; --dorado: #ffd166; --negro: #0a0007; --gris: #1a0a14; }
+  body { font-family: 'DM Sans', sans-serif; min-height: 100vh; background: var(--negro); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124,45,140,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 90%, rgba(255,45,85,0.2) 0%, transparent 60%); pointer-events: none; z-index: 0; }
   .pantalla { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 520px; position: relative; z-index: 1; }
   .pantalla.activa { display: flex; }
-
-  /* ══ INICIO ══ */
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.6rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #fff 0%, var(--rosa) 50%, var(--dorado) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-align: center;
-    line-height: 1.1;
-    margin-bottom: 6px;
-  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 900; background: linear-gradient(135deg, #fff 0%, var(--rosa) 50%, var(--dorado) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; line-height: 1.1; margin-bottom: 6px; }
   .logo-sub { color: rgba(255,255,255,0.4); font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
-
-  .seccion-label {
-    font-size: 0.68rem;
-    letter-spacing: 4px;
-    color: rgba(255,255,255,0.35);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    align-self: flex-start;
-  }
-
-  /* Selector de nivel */
+  .seccion-label { font-size: 0.68rem; letter-spacing: 4px; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 14px; align-self: flex-start; }
   .niveles { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 32px; }
-  .card-nivel {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-    border-radius: 16px;
-    border: 1.5px solid rgba(255,255,255,0.07);
-    background: rgba(255,255,255,0.03);
-    cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-nivel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
+  .card-nivel { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-radius: 16px; border: 1.5px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
+  .card-nivel::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.25s; }
   .card-nivel.nivel-1::before { background: linear-gradient(120deg, rgba(255,107,149,0.12), transparent); }
   .card-nivel.nivel-2::before { background: linear-gradient(120deg, rgba(255,45,85,0.18), transparent); }
   .card-nivel.nivel-3::before { background: linear-gradient(120deg, rgba(255,77,0,0.22), transparent); }
+  .card-nivel.nivel-4::before { background: linear-gradient(120deg, rgba(150,0,255,0.18), transparent); }
   .card-nivel:hover::before, .card-nivel.activo::before { opacity: 1; }
   .card-nivel.activo { border-color: var(--rojo); box-shadow: 0 0 20px rgba(255,45,85,0.2); }
   .nivel-icono { font-size: 1.8rem; flex-shrink: 0; }
   .nivel-texto h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 2px; }
   .nivel-texto p { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
-  .nivel-badge {
-    margin-left: auto;
-    font-size: 0.65rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    flex-shrink: 0;
-  }
+  .nivel-badge { margin-left: auto; font-size: 0.65rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 1px; flex-shrink: 0; }
   .badge-1 { background: rgba(255,107,149,0.2); color: var(--rosa); border: 1px solid rgba(255,107,149,0.3); }
   .badge-2 { background: rgba(255,45,85,0.2); color: #ff6060; border: 1px solid rgba(255,45,85,0.3); }
   .badge-3 { background: rgba(255,77,0,0.2); color: var(--dorado); border: 1px solid rgba(255,77,0,0.3); }
-
-  /* Rondas */
+  .badge-4 { background: rgba(150,0,255,0.2); color: #d580ff; border: 1px solid rgba(150,0,255,0.3); }
   .rondas-grid { display: flex; gap: 10px; width: 100%; margin-bottom: 35px; }
-  .btn-ronda {
-    flex: 1;
-    padding: 14px 8px;
-    background: rgba(255,255,255,0.04);
-    border: 1.5px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    color: rgba(255,255,255,0.6);
-    font-size: 0.82rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-    line-height: 1.3;
-  }
+  .btn-ronda { flex: 1; padding: 14px 8px; background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 14px; color: rgba(255,255,255,0.6); font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; line-height: 1.3; }
   .btn-ronda:hover, .btn-ronda.sel { border-color: var(--rojo); color: white; background: rgba(255,45,85,0.12); }
-
-  .btn-jugar {
-    width: 100%;
-    padding: 18px;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--rojo), var(--morado));
-    border: none;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    letter-spacing: 2px;
-    transition: all 0.25s;
-    box-shadow: 0 6px 30px rgba(255,45,85,0.35);
-  }
+  .btn-libre { border-color: rgba(255,209,102,0.3) !important; color: var(--dorado) !important; }
+  .btn-libre.sel { border-color: var(--dorado) !important; background: rgba(255,209,102,0.12) !important; }
+  .btn-jugar { width: 100%; padding: 18px; font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; letter-spacing: 2px; transition: all 0.25s; box-shadow: 0 6px 30px rgba(255,45,85,0.35); }
   .btn-jugar:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255,45,85,0.5); }
-  .btn-jugar:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
-
-  /* ══ JUEGO ══ */
-  .header-juego {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 18px;
-  }
-  .btn-volver {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.7);
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.82rem;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
+  .nombres-grid { display: flex; gap: 10px; width: 100%; margin-bottom: 28px; }
+  .input-nombre { flex: 1; padding: 13px 16px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; outline: none; transition: all 0.2s; text-align: center; }
+  .input-nombre::placeholder { color: rgba(255,255,255,0.25); }
+  .input-nombre:focus { border-color: var(--rojo); background: rgba(255,45,85,0.07); }
+  .header-juego { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 18px; }
+  .btn-volver { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.82rem; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
   .btn-volver:hover { background: rgba(255,255,255,0.12); color: white; }
   .info-ronda { font-size: 0.82rem; color: rgba(255,255,255,0.4); }
   .info-ronda span { color: white; font-weight: 600; }
-
-  /* Nivel indicator */
-  .nivel-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    border: 1px solid;
-  }
+  .nivel-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; font-weight: 600; letter-spacing: 1px; margin-bottom: 16px; border: 1px solid; }
   .ni-1 { background: rgba(255,107,149,0.12); color: var(--rosa); border-color: rgba(255,107,149,0.25); }
   .ni-2 { background: rgba(255,45,85,0.15); color: #ff7070; border-color: rgba(255,45,85,0.3); }
   .ni-3 { background: rgba(255,77,0,0.15); color: var(--dorado); border-color: rgba(255,77,0,0.3); }
-
-  /* Progreso */
+  .ni-4 { background: rgba(150,0,255,0.12); color: #d580ff; border-color: rgba(150,0,255,0.25); }
   .progreso-container { width: 100%; margin-bottom: 22px; }
   .progreso-nombres { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 7px; }
-  .pn1 { color: #6ee7b7; }
-  .pn2 { color: var(--rosa); }
+  .pn1 { color: #6ee7b7; } .pn2 { color: var(--rosa); }
   .barras { display: flex; height: 6px; border-radius: 10px; overflow: hidden; gap: 3px; }
   .barra-punto { flex: 1; border-radius: 4px; background: rgba(255,255,255,0.08); transition: background 0.4s; }
-  .barra-punto.j1 { background: #6ee7b7; }
-  .barra-punto.j2 { background: var(--rojo); }
-
-  /* Arena */
+  .barra-punto.j1 { background: #6ee7b7; } .barra-punto.j2 { background: var(--rojo); }
   .arena { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 16px; }
   .jugador-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .nombre-jugador { font-size: 0.72rem; color: rgba(255,255,255,0.4); letter-spacing: 2px; text-transform: uppercase; }
-  .display-emoji {
-    font-size: 3rem;
-    width: 105px; height: 105px;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.04);
-    border-radius: 24px;
-    border: 1.5px solid rgba(255,255,255,0.08);
-    transition: all 0.3s;
-    position: relative;
-  }
+  .display-emoji { font-size: 3rem; width: 105px; height: 105px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border-radius: 24px; border: 1.5px solid rgba(255,255,255,0.08); transition: all 0.3s; position: relative; }
   .display-emoji.ganaste { border-color: #6ee7b7; box-shadow: 0 0 25px rgba(110,231,183,0.4); animation: pulso 0.5s ease; }
   .display-emoji.perdiste { border-color: var(--rojo); box-shadow: 0 0 25px rgba(255,45,85,0.4); animation: temblor 0.4s ease; }
   .display-emoji.empate { border-color: var(--dorado); box-shadow: 0 0 20px rgba(255,209,102,0.3); }
   .display-emoji.esperando { opacity: 0.35; }
   .display-emoji.listo { border-color: #6ee7b7; box-shadow: 0 0 12px rgba(110,231,183,0.3); opacity: 1; }
-  .check-listo {
-    position: absolute; top: -8px; right: -8px;
-    background: #6ee7b7; color: #000;
-    border-radius: 50%; width: 20px; height: 20px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.65rem; font-weight: bold;
-    opacity: 0; transition: opacity 0.3s;
-  }
+  .check-listo { position: absolute; top: -8px; right: -8px; background: #6ee7b7; color: #000; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; }
   .check-listo.visible { opacity: 1; }
   .vs { font-size: 1.1rem; font-weight: 700; color: rgba(255,255,255,0.2); letter-spacing: 2px; }
-
-  /* Mensaje */
   .resultado { font-size: 1.1rem; min-height: 40px; text-align: center; margin-bottom: 16px; }
-
-  /* Botones elección */
   .botones { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; justify-content: center; }
-  button.btn-opcion {
-    font-size: 2rem;
-    width: 80px; height: 80px;
-    border: 1.5px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    background: rgba(255,255,255,0.04);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: white;
-    font-family: inherit;
-  }
+  button.btn-opcion { font-size: 2rem; width: 80px; height: 80px; border: 1.5px solid rgba(255,255,255,0.08); border-radius: 20px; background: rgba(255,255,255,0.04); cursor: pointer; transition: all 0.2s ease; color: white; font-family: inherit; }
   button.btn-opcion:hover { transform: translateY(-5px) scale(1.08); background: rgba(255,45,85,0.2); border-color: var(--rojo); box-shadow: 0 8px 25px rgba(255,45,85,0.3); }
   button.btn-opcion:active { transform: scale(0.92); }
-
-  /* Teclado info */
   .teclado-info { display: flex; justify-content: space-between; width: 100%; margin-bottom: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.35); }
   .teclado-info .keys { display: flex; gap: 5px; align-items: center; }
   .key { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 2px 7px; font-size: 0.72rem; color: rgba(255,255,255,0.5); }
   .mensaje-local { font-size: 0.88rem; color: rgba(255,255,255,0.4); margin-bottom: 10px; text-align: center; min-height: 22px; }
-
-  /* Marcador */
   .marcador { display: flex; gap: 12px; }
   .stat { text-align: center; background: rgba(255,255,255,0.04); border-radius: 14px; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.07); }
   .stat .numero { font-size: 1.6rem; font-weight: 700; }
   .stat .label { font-size: 0.68rem; color: rgba(255,255,255,0.35); margin-top: 2px; }
-  .victorias .numero { color: #6ee7b7; }
-  .derrotas .numero { color: var(--rojo); }
-  .empates .numero { color: var(--dorado); }
-
-  /* ══ CARTA DE ATREVIMIENTO ══ */
-  .overlay-dare {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(4px);
-  }
+  .victorias .numero { color: #6ee7b7; } .derrotas .numero { color: var(--rojo); } .empates .numero { color: var(--dorado); }
+  .overlay-dare { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
   .overlay-dare.visible { display: flex; }
-
-  .dare-card {
-    max-width: 400px;
-    width: 100%;
-    background: var(--gris);
-    border-radius: 28px;
-    padding: 36px 30px;
-    text-align: center;
-    border: 1px solid rgba(255,255,255,0.1);
-    position: relative;
-    animation: aparecer 0.4s cubic-bezier(.17,.67,.35,1.3);
-    box-shadow: 0 20px 80px rgba(255,45,85,0.3);
-  }
-  .dare-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 28px;
-    background: linear-gradient(135deg, rgba(255,45,85,0.06), rgba(124,45,140,0.06));
-    pointer-events: none;
-  }
-
-  .dare-nivel-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.65rem;
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    border: 1px solid;
-  }
+  .dare-card { max-width: 400px; width: 100%; background: var(--gris); border-radius: 28px; padding: 36px 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; animation: aparecer 0.4s cubic-bezier(.17,.67,.35,1.3); box-shadow: 0 20px 80px rgba(255,45,85,0.3); }
+  .dare-card::before { content: ''; position: absolute; inset: 0; border-radius: 28px; background: linear-gradient(135deg, rgba(255,45,85,0.06), rgba(124,45,140,0.06)); pointer-events: none; }
+  .dare-nivel-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.65rem; padding: 4px 14px; border-radius: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; border: 1px solid; }
   .dnb-1 { background: rgba(255,107,149,0.1); color: var(--rosa); border-color: rgba(255,107,149,0.2); }
   .dnb-2 { background: rgba(255,45,85,0.15); color: #ff7070; border-color: rgba(255,45,85,0.25); }
   .dnb-3 { background: rgba(255,77,0,0.12); color: var(--dorado); border-color: rgba(255,77,0,0.25); }
-
-  .dare-perdedor {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.35);
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-  }
+  .dnb-4 { background: rgba(150,0,255,0.12); color: #d580ff; border-color: rgba(150,0,255,0.2); }
+  .dare-perdedor { font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-bottom: 10px; letter-spacing: 1px; }
   .dare-perdedor span { color: var(--rosa); font-weight: 600; }
-
-  .dare-titulo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    line-height: 1.3;
-    color: white;
-  }
-
+  .dare-titulo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; line-height: 1.3; color: white; }
   .dare-emoji-grande { font-size: 3rem; margin-bottom: 16px; display: block; }
-
-  .dare-descripcion {
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.7);
-    line-height: 1.6;
-    margin-bottom: 28px;
-  }
-
-  .btn-cumplido {
-    width: 100%;
-    padding: 15px;
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--rojo), var(--morado));
-    border: none;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 6px 25px rgba(255,45,85,0.35);
-    letter-spacing: 1px;
-  }
-  .btn-cumplido:hover { transform: scale(1.03); box-shadow: 0 8px 35px rgba(255,45,85,0.5); }
-
-  .dare-skip {
-    margin-top: 12px;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.25);
-    cursor: pointer;
-    transition: color 0.2s;
-  }
+  .dare-descripcion { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 28px; }
+  .btn-cumplido { width: 100%; padding: 15px; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 25px rgba(255,45,85,0.35); letter-spacing: 1px; }
+  .btn-cumplido:hover { transform: scale(1.03); }
+  .dare-skip { margin-top: 12px; font-size: 0.78rem; color: rgba(255,255,255,0.25); cursor: pointer; transition: color 0.2s; }
   .dare-skip:hover { color: rgba(255,255,255,0.5); }
-
-  /* ══ GANADOR ══ */
   .trofeo { font-size: 5rem; margin-bottom: 15px; animation: aparecer 0.5s ease; }
   .ganador-titulo { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; margin-bottom: 6px; text-align: center; }
   .ganador-sub { color: rgba(255,255,255,0.35); margin-bottom: 35px; font-size: 0.9rem; }
@@ -376,133 +111,90 @@
   .stat-final .n { font-size: 2rem; font-weight: 700; }
   .stat-final .l { font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 3px; }
   .btns-final { display: flex; gap: 12px; }
-  .btn-revancha { padding: 14px 30px; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 20px rgba(255,45,85,0.35); }
+  .btn-revancha { padding: 14px 30px; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; transition: all 0.2s; }
   .btn-revancha:hover { transform: scale(1.05); }
   .btn-menu { padding: 14px 30px; font-size: 1rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 50px; color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
   .btn-menu:hover { background: rgba(255,255,255,0.12); color: white; }
-
-  /* Animaciones */
+  .btn-terminar { margin-top: 14px; padding: 10px 24px; font-size: 0.8rem; background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.25); border-radius: 30px; color: var(--dorado); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; display: none; }
+  .btn-terminar.visible { display: inline-block; }
+  .cargando { position: fixed; inset: 0; background: var(--negro); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 200; transition: opacity 0.4s; }
+  .cargando.oculto { opacity: 0; pointer-events: none; }
+  .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--rosa); border-radius: 50%; animation: girar 0.8s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
   @keyframes pulso { 0%,100%{transform:scale(1)} 50%{transform:scale(1.22)} }
   @keyframes temblor { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
   @keyframes aparecer { from{opacity:0;transform:translateY(-18px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
-  .nombres-grid { display: flex; gap: 10px; width: 100%; margin-bottom: 28px; }
-  .input-nombre {
-    flex: 1;
-    padding: 13px 16px;
-    background: rgba(255,255,255,0.05);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    border-radius: 14px;
-    color: white;
-    font-size: 0.9rem;
-    font-family: 'DM Sans', sans-serif;
-    outline: none;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .input-nombre::placeholder { color: rgba(255,255,255,0.25); }
-  .input-nombre:focus { border-color: var(--rojo); background: rgba(255,45,85,0.07); box-shadow: 0 0 15px rgba(255,45,85,0.15); }
-
-  .btn-libre { border-color: rgba(255,209,102,0.3) !important; color: var(--dorado) !important; }
-  .btn-libre.sel { border-color: var(--dorado) !important; background: rgba(255,209,102,0.12) !important; color: var(--dorado) !important; }
-
-  .badge-4 { background: rgba(150,0,255,0.2); color: #d580ff; border: 1px solid rgba(150,0,255,0.3); }
-  .card-nivel.nivel-4::before { background: linear-gradient(120deg, rgba(150,0,255,0.18), transparent); }
-  .ni-4 { background: rgba(150,0,255,0.12); color: #d580ff; border-color: rgba(150,0,255,0.25); }
-  .dnb-4 { background: rgba(150,0,255,0.12); color: #d580ff; border-color: rgba(150,0,255,0.2); }
-  .libre-banner.visible { display: block; }
-
-  .btn-terminar { margin-top: 14px; padding: 10px 24px; font-size: 0.8rem; background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.25); border-radius: 30px; color: var(--dorado); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; display: none; }
-  .btn-terminar.visible { display: inline-block; }
-  .btn-terminar:hover { background: rgba(255,209,102,0.2); }
-
-
   .confetti-piece { position:fixed;width:10px;height:10px;top:-20px;border-radius:2px;animation:confetti-fall linear forwards;pointer-events:none;z-index:999; }
+  @keyframes confetti-fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
 </style>
 </head>
 <body>
 
-<!-- ══════════ OVERLAY DARE ══════════ -->
+<div class="cargando" id="cargando">
+  <div class="spinner"></div>
+  <div style="color:rgba(255,255,255,0.4);font-size:0.85rem">Cargando castigos...</div>
+</div>
+
 <div class="overlay-dare" id="overlay-dare">
-  <div class="dare-card" id="dare-card">
+  <div class="dare-card">
     <div class="dare-nivel-badge" id="dare-badge">💋 NIVEL SEXI</div>
     <div class="dare-perdedor">¡<span id="dare-perdedor-nombre">Jugador</span> perdió esta ronda!</div>
     <div class="dare-emoji-grande" id="dare-emoji">💋</div>
     <div class="dare-titulo" id="dare-titulo">Tu atrevimiento</div>
-    <div class="dare-descripcion" id="dare-descripcion">Descripción del atrevimiento</div>
+    <div class="dare-descripcion" id="dare-descripcion">Descripción</div>
     <button class="btn-cumplido" onclick="cerrarDare()">✓ ¡Hecho! Siguiente ronda</button>
     <div class="dare-skip" onclick="cerrarDare()">Saltar (sin puntos extra)</div>
   </div>
 </div>
 
-<!-- ══════════ INICIO ══════════ -->
 <div class="pantalla activa" id="pantalla-inicio">
   <div class="logo">🔥 Piedra, Papel<br>o Tijera</div>
   <p class="logo-sub">Edición para parejas</p>
-
   <p class="seccion-label">Nivel de calor</p>
   <div class="niveles">
     <div class="card-nivel nivel-1 activo" id="card-1" onclick="seleccionarNivel(1)">
       <span class="nivel-icono">💋</span>
-      <div class="nivel-texto">
-        <h3>Sexi</h3>
-        <p>Coqueteo suave, besos y caricias</p>
-      </div>
+      <div class="nivel-texto"><h3>Sexi</h3><p>Coqueteo suave, besos y caricias</p></div>
       <span class="nivel-badge badge-1">SUAVE</span>
     </div>
     <div class="card-nivel nivel-2" id="card-2" onclick="seleccionarNivel(2)">
       <span class="nivel-icono">🔥</span>
-      <div class="nivel-texto">
-        <h3>Ardiente</h3>
-        <p>Mucho más atrevido y explícito</p>
-      </div>
+      <div class="nivel-texto"><h3>Ardiente</h3><p>Mucho más atrevido y explícito</p></div>
       <span class="nivel-badge badge-2">PICANTE</span>
     </div>
     <div class="card-nivel nivel-3" id="card-3" onclick="seleccionarNivel(3)">
       <span class="nivel-icono">🌶️</span>
-      <div class="nivel-texto">
-        <h3>Fuego total</h3>
-        <p>Sin filtros, solo para mayores atrevidos</p>
-      </div>
+      <div class="nivel-texto"><h3>Fuego total</h3><p>Sin filtros, solo para mayores atrevidos</p></div>
       <span class="nivel-badge badge-3">EXPLOSIVO</span>
     </div>
     <div class="card-nivel nivel-4" id="card-4" onclick="seleccionarNivel(4)">
       <span class="nivel-icono">💀</span>
-      <div class="nivel-texto">
-        <h3>Hardcore — Grupo</h3>
-        <p>Para 3+ personas. Sin límites. Sin filtros.</p>
-      </div>
+      <div class="nivel-texto"><h3>Hardcore — Grupo</h3><p>Para 3+ personas. Sin límites.</p></div>
       <span class="nivel-badge badge-4">GRUPERO</span>
     </div>
   </div>
-
   <p class="seccion-label">Nombres</p>
   <div class="nombres-grid">
     <input class="input-nombre" id="input-j1" type="text" placeholder="Jugador 1" maxlength="16" />
     <input class="input-nombre" id="input-j2" type="text" placeholder="Jugador 2" maxlength="16" />
   </div>
-
-  <p class="seccion-label">Modo</p>
+  <p class="seccion-label">Rondas</p>
   <div class="rondas-grid" style="margin-bottom:35px">
     <button class="btn-ronda sel" onclick="seleccionarRondas(3,this)">Mejor<br>de 3</button>
     <button class="btn-ronda" onclick="seleccionarRondas(5,this)">Mejor<br>de 5</button>
     <button class="btn-ronda" onclick="seleccionarRondas(7,this)">Mejor<br>de 7</button>
     <button class="btn-ronda btn-libre" onclick="seleccionarRondas(0,this)">♾️<br>Libre</button>
   </div>
-
   <button class="btn-jugar" onclick="iniciarJuego()">🔥 EMPEZAR</button>
 </div>
 
-<!-- ══════════ JUEGO ══════════ -->
 <div class="pantalla" id="pantalla-juego">
   <div class="header-juego">
     <button class="btn-volver" onclick="volverInicio()">← Menú</button>
     <div class="info-ronda">Ronda <span id="ronda-actual">1</span> / <span id="ronda-total">3</span></div>
     <div style="width:70px"></div>
   </div>
-
   <div class="nivel-indicator" id="nivel-indicator">💋 NIVEL SEXI</div>
-  <div class="libre-banner" id="libre-banner">♾️ MODO LIBRE — SIN LÍMITE</div>
-
   <div class="progreso-container">
     <div class="progreso-nombres">
       <span class="pn1" id="nombre-j1-prog">Jugador 1</span>
@@ -510,58 +202,37 @@
     </div>
     <div class="barras" id="barras-progreso"></div>
   </div>
-
   <div class="arena">
     <div class="jugador-box">
       <div class="nombre-jugador" id="nombre-j1-arena">J1</div>
-      <div class="display-emoji" id="display-j1">
-        ❓
-        <div class="check-listo" id="check-j1">✓</div>
-      </div>
+      <div class="display-emoji" id="display-j1">❓<div class="check-listo" id="check-j1">✓</div></div>
     </div>
     <div class="vs">VS</div>
     <div class="jugador-box">
       <div class="nombre-jugador" id="nombre-j2-arena">J2</div>
-      <div class="display-emoji" id="display-j2">
-        ❓
-        <div class="check-listo" id="check-j2">✓</div>
-      </div>
+      <div class="display-emoji" id="display-j2">❓<div class="check-listo" id="check-j2">✓</div></div>
     </div>
   </div>
-
-  <!-- Teclado info (modo local) -->
   <div class="teclado-info" id="teclado-info" style="display:none">
     <div class="keys"><span class="key">A</span>🏔️ <span class="key">S</span>📄 <span class="key">D</span>✂️</div>
     <div style="color:rgba(255,255,255,0.2);font-size:0.7rem">en secreto</div>
     <div class="keys">🏔️<span class="key">J</span> 📄<span class="key">K</span> ✂️<span class="key">L</span></div>
   </div>
-
   <div class="mensaje-local" id="mensaje-local"></div>
-
   <div class="botones" id="botones-pc">
     <button class="btn-opcion" onclick="jugarPC('piedra')">🏔️</button>
     <button class="btn-opcion" onclick="jugarPC('papel')">📄</button>
     <button class="btn-opcion" onclick="jugarPC('tijera')">✂️</button>
   </div>
-
   <div class="resultado" id="resultado">¡Elige tu jugada!</div>
-
   <div class="marcador">
-    <div class="stat victorias">
-      <div class="numero" id="marcador-v">0</div>
-      <div class="label" id="marcador-v-label">J1</div>
-    </div>
-    <div class="stat empates">
-      <div class="numero" id="marcador-e">0</div>
-      <div class="label">Empates</div>
-    </div>
-    <div class="stat derrotas">
-      <div class="numero" id="marcador-d">0</div>
-      <div class="label" id="marcador-d-label">J2</div>
-    </div>
+    <div class="stat victorias"><div class="numero" id="marcador-v">0</div><div class="label" id="marcador-v-label">J1</div></div>
+    <div class="stat empates"><div class="numero" id="marcador-e">0</div><div class="label">Empates</div></div>
+    <div class="stat derrotas"><div class="numero" id="marcador-d">0</div><div class="label" id="marcador-d-label">J2</div></div>
   </div>
   <button class="btn-terminar" id="btn-terminar" onclick="terminarLibre()">⛳ Terminar partida</button>
 </div>
+
 <div class="pantalla" id="pantalla-ganador">
   <div class="trofeo" id="trofeo-emoji">🏆</div>
   <div class="ganador-titulo" id="ganador-titulo">¡Ganaste!</div>
@@ -578,186 +249,99 @@
 </div>
 
 <script>
-// ═══════════════════════════════
-// DARES POR NIVEL
-// ═══════════════════════════════
-const daresBase = {
-  1: [ // 💋 SEXI
-    { emoji: '💋', titulo: 'Beso de película', desc: 'Dale un beso de 15 segundos como si fuera la última escena de una película romántica. Sin apuro, con toda la intención.' },
-    { emoji: '🌹', titulo: 'Susurro al oído', desc: 'Acércate bien y susurrale al oído en detalle qué es lo que más te gusta de su cuerpo. Tomá tu tiempo.' },
-    { emoji: '💆', titulo: 'Masaje sensual', desc: 'Masajeale los hombros, cuello y espalda alta por 2 minutos completos. Despacio, con intención.' },
-    { emoji: '👗', titulo: 'Una prenda menos', desc: 'Quitáte una prenda de ropa lentamente, con toda la actitud. El resto del juego seguís con eso.' },
-    { emoji: '👁️', titulo: 'Contacto visual', desc: 'Mírale a los ojos con tu mejor mirada seductora por 30 segundos sin reírte ni apartar la vista.' },
-    { emoji: '🤏', titulo: 'Caricia lenta', desc: 'Con la punta de los dedos, recorré lentamente desde su hombro hasta su mano. Agonizantemente despacio.' },
-    { emoji: '💃', titulo: 'Baile personal', desc: 'Bailale de manera sensual por 30 segundos. Sin vergüenza, solo para esa persona.' },
-    { emoji: '🫦', titulo: 'Mordisco suave', desc: 'Dale un mordisco suave en el cuello o en el lóbulo de la oreja. Suave pero memorable.' },
-    { emoji: '📸', titulo: 'Foto sexy', desc: 'Hacele una foto seductora (como vos la definís) que quede en el teléfono de la otra persona.' },
-    { emoji: '🫂', titulo: 'Abrazo largo', desc: 'Abrazala por detrás y quedate así 30 segundos, respirando en su cuello.' },
-    { emoji: '🌙', titulo: 'Apagá la luz', desc: 'Apaguen todas las luces y durante 45 segundos se tocan solo con las manos en completa oscuridad. Sin hablar.' },
-    { emoji: '🫀', titulo: 'Latidos', desc: 'Apoyá la cabeza en el pecho de tu pareja y escuchá su corazón por 30 segundos. Después ella/él hace lo mismo con vos.' },
-    { emoji: '💌', titulo: 'Mensaje de amor sucio', desc: 'Escribile un mensaje de texto describiendo algo íntimo que recordás y te gusta de esa persona. Leélo en voz alta.' },
-    { emoji: '🍷', titulo: 'Beber del cuello', desc: 'Pasá los labios suavemente por todo el cuello, de un lado al otro, durante 20 segundos.' },
-    { emoji: '🧤', titulo: 'Sin mirar', desc: 'Con los ojos cerrados, la otra persona guía tu mano por donde quiera durante 30 segundos. Vos solo seguís.' },
-  ],
-  2: [ // 🔥 ARDIENTE
-    { emoji: '🔥', titulo: 'Fantasía en voz alta', desc: 'Contale en detalle una fantasía que tengas con esa persona. Sin censura, con lujo de detalles. Mirala a los ojos mientras hablás.' },
-    { emoji: '👙', titulo: 'Dos prendas', desc: 'Quitáte dos prendas de ropa, la que la otra persona elija. El resto del juego seguís con lo que queda.' },
-    { emoji: '🍯', titulo: 'Zona prohibida', desc: 'Durante 1 minuto podés besar o acariciar cualquier parte del cuerpo de la otra persona. Ella/él elige la zona. Vos elegís cómo.' },
-    { emoji: '📱', titulo: 'Foto atrevida', desc: 'Hacele la foto más atrevida que te animés. Queda guardada en el teléfono del ganador. No se borra hasta que digas lo contrario.' },
-    { emoji: '🌡️', titulo: 'Mensaje de voz', desc: 'Grabá un mensaje de voz de 40 segundos describiendo en detalle lo que querés hacerle esta noche. Sin pausas, sin filtros.' },
-    { emoji: '💋', titulo: 'Beso sin límite', desc: 'Beso apasionado de 2 minutos cronometrados. Manos libres para moverse donde quieran. Sin pausas y sin separarse.' },
-    { emoji: '🎭', titulo: 'Strip lento', desc: 'Quitáte la ropa lentamente mientras la otra persona elige la canción y el ritmo. Toda la actitud. Nada de apurarse.' },
-    { emoji: '✍️', titulo: 'Mensaje secreto', desc: 'Escribí con el dedo en la espalda de la otra persona, letra por letra, exactamente qué querés que te hagan. Que adivine.' },
-    { emoji: '🫦', titulo: 'Zona caliente', desc: 'Elegí una zona del cuerpo de tu pareja y dedicale 90 segundos de besos, lengua y caricias. Sin interrupciones.' },
-    { emoji: '🎤', titulo: 'Descripción en detalle', desc: 'De pie frente a tu pareja describí en voz alta tu posición o situación favorita. Con los detalles que hagan falta.' },
-    { emoji: '🌊', titulo: 'Ola de caricias', desc: 'Empezá por el cabello y recorré todo el cuerpo de tu pareja con ambas manos muy despacio hasta llegar a los pies. Sin saltearte nada.' },
-    { emoji: '🎲', titulo: 'Tiro de dados', desc: 'Tirá un dado imaginario (número del 1 al 6). Ese número son los minutos que la otra persona puede hacer lo que quiera con vos.' },
-    { emoji: '🌶️', titulo: 'Verdad incómoda', desc: 'Decile a tu pareja la cosa más atrevida que pensaste hacer con ella y nunca dijiste en voz alta. Sin rodeos.' },
-    { emoji: '🔐', titulo: 'La clave secreta', desc: 'Decile en detalle cuál es tu zona más sensible, cómo querés que te la toquen y con qué. Mostralo si hace falta.' },
-    { emoji: '🩲', titulo: 'Abajo todo', desc: 'Quitáte toda la ropa de la cintura para abajo. El resto del juego seguís así. El ganador decide si cambia.' },
-    { emoji: '💦', titulo: 'Boca y manos libres', desc: 'Por 2 minutos tenés la boca y las manos completamente libres para hacer lo que quieras con el cuerpo de tu pareja. Ella/él no puede moverse.' },
-    { emoji: '🎯', titulo: 'Punto débil', desc: 'Decile exactamente dónde y cómo tocarte para volverte loco/a. Después dejá que lo practique por 2 minutos seguidos.' },
-    { emoji: '🌋', titulo: 'Temperatura', desc: 'Empezá con un cubo de hielo en alguna parte del cuerpo de tu pareja y terminá con tu boca caliente en el mismo lugar.' },
-    { emoji: '📽️', titulo: 'Actuación en vivo', desc: 'Actuá durante 1 minuto como si estuvieras filmando una escena de una película adulta. Tu pareja dirige. Vos actuás.' },
-    { emoji: '🩸', titulo: 'Sin inhibiciones', desc: 'Hacé durante 90 segundos eso que siempre quisiste hacer pero te daba vergüenza pedir. Sin pedir permiso. Sin explicaciones.' },
-  ],
-  3: [ // 🌶️ FUEGO TOTAL
-    { emoji: '🌋', titulo: 'Sin ropa, punto', desc: 'El que perdió se queda sin ropa el resto del juego. Completamente. Sin negociación.' },
-    { emoji: '⏱️', titulo: '5 minutos sin límite', desc: 'La otra persona tiene 5 minutos para hacer lo que quiera con vos. No podés moverte ni decir que no a nada.' },
-    { emoji: '🎰', titulo: 'Posición elegida', desc: 'El ganador elige la posición. Se ejecuta ahora, antes de la próxima ronda. No es sugerencia.' },
-    { emoji: '🫢', titulo: 'Pausa total', desc: 'Apaguen el juego. Vuelvan cuando los dos queden satisfechos. Después seguimos con la partida.' },
-    { emoji: '👄', titulo: 'De rodillas', desc: 'El perdedor se arrodilla y cumple lo que el ganador pida durante 3 minutos completos. Sin excepciones, sin límites.' },
-    { emoji: '🔞', titulo: 'Video privado', desc: 'Grabá un video de 45 segundos haciendo lo más atrevido que te animés. Queda en el teléfono del ganador.' },
-    { emoji: '🌡️', titulo: 'Sin ropa los dos', desc: 'Los dos se sacan toda la ropa ahora mismo. El juego continúa así hasta el final. No hay vuelta atrás.' },
-    { emoji: '🔑', titulo: 'Control total', desc: 'Por la próxima ronda el ganador tiene control absoluto. El perdedor obedece todo, sin hablar, sin moverse de más.' },
-    { emoji: '💣', titulo: 'La fantasía prohibida', desc: 'El perdedor cumple la fantasía número uno del ganador. La que nunca se animaron a pedir en voz alta. Esta noche sí.' },
-    { emoji: '🕳️', titulo: 'El límite sos vos', desc: 'El ganador tiene 10 minutos de poder absoluto. El perdedor pone el único límite que quiera, y todo lo demás es sí.' },
-    { emoji: '🔥', titulo: 'Ahora mismo', desc: 'Paren el juego. El ganador elige dónde, cómo y en qué posición. El perdedor acepta sin cambiar nada. Cuando terminen, vuelven.' },
-    { emoji: '🎭', titulo: 'Rol invertido', desc: 'El perdedor toma el rol que nunca toma normalmente. Por 5 minutos completos. El ganador define cuál es ese rol.' },
-  ],
-  4: [ // 🫦 HARDCORE GRUPO
-    { emoji: '🫦', titulo: 'El más valiente del grupo', desc: 'El perdedor hace lo que el grupo decida por votación (manos arriba). Lo que gane por mayoría, se cumple. Sin veto.' },
-    { emoji: '🔁', titulo: 'Pasalo', desc: 'El perdedor elige a alguien del grupo y le da un beso de mínimo 10 segundos. La otra persona no puede negarse.' },
-    { emoji: '🎭', titulo: 'Strip grupal', desc: 'El perdedor se saca una prenda. Pero el grupo decide cuál prenda. Mayoría de votos gana.' },
-    { emoji: '👀', titulo: 'Mirando todos', desc: 'El perdedor y la persona a su izquierda hacen lo que el grupo elija, mientras todos miran. El grupo tiene 30 segundos para decidir.' },
-    { emoji: '🤫', titulo: 'Secreto grupal', desc: 'El perdedor le susurra al oído a cada persona del grupo su fantasía favorita con alguien en la sala. Todos escuchan de a uno.' },
-    { emoji: '🎯', titulo: 'Ruleta del grupo', desc: 'El perdedor gira una botella o elige al azar. Con quien señale, tienen 2 minutos para hacer lo que el grupo vote.' },
-    { emoji: '🌶️', titulo: 'Cadena de caricias', desc: 'El perdedor toca a la persona de su derecha, esa toca a la siguiente, y así alrededor del grupo. Cada uno elige dónde en la persona siguiente.' },
-    { emoji: '🔥', titulo: 'El sándwich', desc: 'El perdedor queda en el medio de las dos personas que el grupo elija. Tienen 3 minutos. El grupo define qué pasa.' },
-    { emoji: '🎲', titulo: 'Dados en grupo', desc: 'El perdedor tira un dado. El número indica cuántas personas del grupo pueden hacer algo con él/ella durante ese mismo número de minutos.' },
-    { emoji: '💋', titulo: 'Beso de grupo', desc: 'El perdedor besa a todas las personas del grupo, de corrido, 5 segundos cada una. El grupo puede extender el tiempo por votación.' },
-    { emoji: '🩲', titulo: 'Prenda a elección', desc: 'Cada persona del grupo vota una prenda. La que más votos tiene, el perdedor se la saca. Si ya está sin ropa, cumple un reto del nivel anterior.' },
-    { emoji: '🫶', titulo: 'Todos contra uno', desc: 'El perdedor se sienta en el medio. Por 2 minutos cada persona del grupo puede hacer una cosa con él/ella. El perdedor elige el orden.' },
-    { emoji: '🌀', titulo: 'Turno libre grupal', desc: 'El perdedor elige a dos personas del grupo. Esas dos personas tienen 3 minutos juntas para hacer lo que quieran frente a todos.' },
-    { emoji: '🔐', titulo: 'Secreto al descubierto', desc: 'El perdedor le confiesa al grupo su fantasía más extrema que involucre a más de una persona de las que están en la sala. Con detalles.' },
-    { emoji: '💥', titulo: 'El gran reto grupal', desc: 'Todo el grupo vota el reto más extremo que se animen a proponer. El que gane por mayoría, el perdedor lo cumple ahora mismo.' },
-  ],
-};
+// ═══════════════════════════════════════════════
+// CARGAR CASTIGOS DESDE castigos.json
+// En vez de tener 200 líneas de castigos acá adentro,
+// el juego va a buscar el archivo y los carga.
+// ═══════════════════════════════════════════════
+let daresBase = {};
+let colasDares = {};
 
-// Sistema anti-repetición: cola shuffleada por nivel
-const colasDares = {};
+fetch('castigos.json')
+  .then(r => r.json())
+  .then(data => {
+    daresBase = data;
+    ocultarCargando();
+  })
+  .catch(() => {
+    alert('No se pudo cargar castigos.json');
+    ocultarCargando();
+  });
+
+function ocultarCargando() {
+  const c = document.getElementById('cargando');
+  c.classList.add('oculto');
+  setTimeout(() => c.remove(), 500);
+}
+
 function getDare(nivelN) {
-  if (!colasDares[nivelN] || colasDares[nivelN].length === 0) {
-    // Shuffle de toda la lista
-    const copia = [...daresBase[nivelN]];
+  const key = String(nivelN);
+  if (!colasDares[key] || colasDares[key].length === 0) {
+    const copia = [...daresBase[key]];
     for (let i = copia.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [copia[i], copia[j]] = [copia[j], copia[i]];
     }
-    colasDares[nivelN] = copia;
+    colasDares[key] = copia;
   }
-  return colasDares[nivelN].pop();
+  return colasDares[key].pop();
 }
 
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════
 // ESTADO
-// ═══════════════════════════════
-let modo = 'local';
-let nivel = 1;
-let rondasTotal = 3;
-let rondasNecesarias = 2;
-let modoLibre = false;
-let puntosJ1 = 0, puntosJ2 = 0, empatesTotal = 0;
-let rondaActual = 1;
-let juegoActivo = true;
-let eleccionJ1 = null, eleccionJ2 = null;
-let pendienteDare = null;
+// ═══════════════════════════════════════════════
+let nivel = 1, rondasTotal = 3, rondasNecesarias = 2, modoLibre = false;
+let puntosJ1 = 0, puntosJ2 = 0, empatesTotal = 0, rondaActual = 1;
+let juegoActivo = true, eleccionJ1 = null, eleccionJ2 = null, pendienteDare = null;
 let nombreJ1 = 'Jugador 1', nombreJ2 = 'Jugador 2';
 
 const emojis = { piedra:'🏔️', papel:'📄', tijera:'✂️' };
-const opcionesNormales = ['piedra','papel','tijera'];
 const ganaNormal = { piedra:'tijera', tijera:'papel', papel:'piedra' };
-
 const nivelConfig = {
-  1: { label: '💋 NIVEL SEXI', clase: 'ni-1', badgeClase: 'dnb-1', badgeLabel: '💋 SEXI' },
-  2: { label: '🔥 ARDIENTE', clase: 'ni-2', badgeClase: 'dnb-2', badgeLabel: '🔥 ARDIENTE' },
-  3: { label: '🌶️ FUEGO TOTAL', clase: 'ni-3', badgeClase: 'dnb-3', badgeLabel: '🌶️ FUEGO TOTAL' },
-  4: { label: '💀 HARDCORE', clase: 'ni-4', badgeClase: 'dnb-4', badgeLabel: '💀 HARDCORE' },
+  1: { label:'💋 NIVEL SEXI', clase:'ni-1', badgeClase:'dnb-1', badgeLabel:'💋 SEXI' },
+  2: { label:'🔥 ARDIENTE', clase:'ni-2', badgeClase:'dnb-2', badgeLabel:'🔥 ARDIENTE' },
+  3: { label:'🌶️ FUEGO TOTAL', clase:'ni-3', badgeClase:'dnb-3', badgeLabel:'🌶️ FUEGO TOTAL' },
+  4: { label:'💀 HARDCORE', clase:'ni-4', badgeClase:'dnb-4', badgeLabel:'💀 HARDCORE' },
 };
 
-// ═══════════════════════════════
-// MENÚ
-// ═══════════════════════════════
 function seleccionarNivel(n) {
   nivel = n;
-  [1,2,3,4].forEach(i => {
-    const el = document.getElementById('card-'+i);
-    if (el) el.classList.toggle('activo', i===n);
-  });
+  [1,2,3,4].forEach(i => { const el = document.getElementById('card-'+i); if(el) el.classList.toggle('activo', i===n); });
 }
 
 function seleccionarRondas(n, btn) {
-  rondasTotal = n;
-  modoLibre = n === 0;
-  rondasNecesarias = modoLibre ? Infinity : Math.ceil(n / 2);
+  rondasTotal = n; modoLibre = n===0;
+  rondasNecesarias = modoLibre ? Infinity : Math.ceil(n/2);
   document.querySelectorAll('.btn-ronda').forEach(b => b.classList.remove('sel'));
   btn.classList.add('sel');
 }
 
 function iniciarJuego() {
-  puntosJ1 = 0; puntosJ2 = 0; empatesTotal = 0; rondaActual = 1;
-  eleccionJ1 = null; eleccionJ2 = null;
-  juegoActivo = true;
-  modo = 'local';
-
-  // Leer nombres
+  puntosJ1=0; puntosJ2=0; empatesTotal=0; rondaActual=1;
+  eleccionJ1=null; eleccionJ2=null; juegoActivo=true;
   nombreJ1 = document.getElementById('input-j1').value.trim() || 'Jugador 1';
   nombreJ2 = document.getElementById('input-j2').value.trim() || 'Jugador 2';
-
-  document.getElementById('nombre-j1-prog').textContent = nombreJ1;
-  document.getElementById('nombre-j2-prog').textContent = nombreJ2;
+  document.getElementById('nombre-j1-prog').textContent  = nombreJ1;
+  document.getElementById('nombre-j2-prog').textContent  = nombreJ2;
   document.getElementById('nombre-j1-arena').textContent = nombreJ1;
   document.getElementById('nombre-j2-arena').textContent = nombreJ2;
   document.getElementById('marcador-v-label').textContent = nombreJ1;
   document.getElementById('marcador-d-label').textContent = nombreJ2;
-
-  // Modo libre
-  document.getElementById('libre-banner').classList.toggle('visible', modoLibre);
   document.getElementById('btn-terminar').classList.toggle('visible', modoLibre);
-
-  // Nivel indicator
   const cfg = nivelConfig[nivel];
   const ni = document.getElementById('nivel-indicator');
-  ni.textContent = cfg.label;
-  ni.className = 'nivel-indicator ' + cfg.clase;
-
+  ni.textContent = cfg.label; ni.className = 'nivel-indicator ' + cfg.clase;
   document.getElementById('botones-pc').style.display = 'none';
   document.getElementById('teclado-info').style.display = 'flex';
   document.getElementById('mensaje-local').style.display = 'block';
-
-  actualizarRonda();
-  construirBarras();
-  resetArena();
+  actualizarRonda(); construirBarras(); resetArena();
   document.getElementById('mensaje-local').textContent = '¡Que cada uno elija en secreto!';
   mostrar('pantalla-juego');
 }
 
-// ═══════════════════════════════
-// LÓGICA
-// ═══════════════════════════════
 function determinarResultado(j1, j2) {
-  if (j1 === j2) return 'empate';
-  return ganaNormal[j1] === j2 ? 'j1' : 'j2';
+  if (j1===j2) return 'empate';
+  return ganaNormal[j1]===j2 ? 'j1' : 'j2';
 }
 
 function resolverRonda(j1, j2) {
@@ -765,230 +349,113 @@ function resolverRonda(j1, j2) {
   const res = determinarResultado(j1, j2);
   const dJ1 = document.getElementById('display-j1');
   const dJ2 = document.getElementById('display-j2');
-  dJ1.className = 'display-emoji';
-  dJ2.className = 'display-emoji';
+  dJ1.className = 'display-emoji'; dJ2.className = 'display-emoji';
   dJ1.childNodes[0].textContent = emojis[j1];
   dJ2.childNodes[0].textContent = emojis[j2];
-
-  let msg = '';
-  let perdedor = null;
-
-  if (res === 'empate') {
-    msg = '🤝 ¡Empate! Nadie pierde esta vez...';
-    empatesTotal++;
-    dJ1.classList.add('empate');
-    dJ2.classList.add('empate');
-  } else if (res === 'j1') {
-    msg = `🎉 ¡Gana ${nombreJ1}! ${nombreJ2} cumple el atrevimiento`;
-    puntosJ1++;
-    dJ1.classList.add('ganaste');
-    dJ2.classList.add('perdiste');
-    perdedor = nombreJ2;
+  let msg='', perdedor=null;
+  if (res==='empate') {
+    msg='🤝 ¡Empate! Nadie pierde esta vez...'; empatesTotal++;
+    dJ1.classList.add('empate'); dJ2.classList.add('empate');
+  } else if (res==='j1') {
+    msg=`🎉 ¡Gana ${nombreJ1}! ${nombreJ2} cumple el castigo`; puntosJ1++;
+    dJ1.classList.add('ganaste'); dJ2.classList.add('perdiste'); perdedor=nombreJ2;
   } else {
-    msg = `🎉 ¡Gana ${nombreJ2}! ${nombreJ1} cumple el atrevimiento`;
-    puntosJ2++;
-    dJ1.classList.add('perdiste');
-    dJ2.classList.add('ganaste');
-    perdedor = nombreJ1;
+    msg=`🎉 ¡Gana ${nombreJ2}! ${nombreJ1} cumple el castigo`; puntosJ2++;
+    dJ1.classList.add('perdiste'); dJ2.classList.add('ganaste'); perdedor=nombreJ1;
   }
-
   document.getElementById('resultado').textContent = msg;
-  actualizarMarcadores();
-  actualizarBarras();
-  eleccionJ1 = null; eleccionJ2 = null;
-
-  const serieTermino = !modoLibre && (puntosJ1 >= rondasNecesarias || puntosJ2 >= rondasNecesarias);
-
-  if (perdedor && res !== 'empate') {
-    // Mostrar dare
+  actualizarMarcadores(); actualizarBarras();
+  eleccionJ1=null; eleccionJ2=null;
+  const serieTermino = !modoLibre && (puntosJ1>=rondasNecesarias || puntosJ2>=rondasNecesarias);
+  if (perdedor) {
     setTimeout(() => mostrarDare(perdedor, serieTermino), 500);
   } else {
-    // Empate: siguiente ronda directa
     if (!serieTermino) {
-      rondaActual++;
-      actualizarRonda();
-      setTimeout(() => {
-        resetArena();
-        document.getElementById('mensaje-local').textContent = '¡Que cada uno elija en secreto!';
-      }, 800);
-    } else {
-      juegoActivo = false;
-      setTimeout(mostrarGanador, 900);
-    }
+      rondaActual++; actualizarRonda();
+      setTimeout(() => { resetArena(); document.getElementById('mensaje-local').textContent='¡Que cada uno elija en secreto!'; }, 800);
+    } else { juegoActivo=false; setTimeout(mostrarGanador, 900); }
   }
 }
 
 function mostrarDare(perdedorNombre, serieTerminaDespues) {
   const dare = getDare(nivel);
   const cfg = nivelConfig[nivel];
-
   const badge = document.getElementById('dare-badge');
-  badge.textContent = cfg.badgeLabel;
-  badge.className = 'dare-nivel-badge ' + cfg.badgeClase;
-
+  badge.textContent = cfg.badgeLabel; badge.className = 'dare-nivel-badge ' + cfg.badgeClase;
   document.getElementById('dare-perdedor-nombre').textContent = perdedorNombre;
   document.getElementById('dare-emoji').textContent = dare.emoji;
   document.getElementById('dare-titulo').textContent = dare.titulo;
   document.getElementById('dare-descripcion').textContent = dare.desc;
-
   pendienteDare = { serieTermina: serieTerminaDespues };
   document.getElementById('overlay-dare').classList.add('visible');
 }
 
 function cerrarDare() {
   document.getElementById('overlay-dare').classList.remove('visible');
-  const { serieTermina } = pendienteDare;
-  pendienteDare = null;
-
-  if (serieTermina) {
-    juegoActivo = false;
-    setTimeout(mostrarGanador, 300);
-  } else {
-    rondaActual++;
-    actualizarRonda();
-    setTimeout(() => {
-      resetArena();
-      document.getElementById('mensaje-local').textContent = '¡Que cada uno elija en secreto!';
-    }, 200);
+  const { serieTermina } = pendienteDare; pendienteDare=null;
+  if (serieTermina) { juegoActivo=false; setTimeout(mostrarGanador, 300); }
+  else {
+    rondaActual++; actualizarRonda();
+    setTimeout(() => { resetArena(); document.getElementById('mensaje-local').textContent='¡Que cada uno elija en secreto!'; }, 200);
   }
 }
 
-// ═══════════════════════════════
-// TECLADO (modo local)
-// ═══════════════════════════════
 document.addEventListener('keydown', (e) => {
   if (!juegoActivo) return;
-  const mapa = { 'a':'piedra','s':'papel','d':'tijera','j':'piedra','k':'papel','l':'tijera' };
+  const mapa = {'a':'piedra','s':'papel','d':'tijera','j':'piedra','k':'papel','l':'tijera'};
   const tecla = e.key.toLowerCase();
   if (!mapa[tecla]) return;
   const esJ1 = ['a','s','d'].includes(tecla);
   const esJ2 = ['j','k','l'].includes(tecla);
-
-  if (esJ1 && !eleccionJ1) {
-    eleccionJ1 = mapa[tecla];
-    document.getElementById('display-j1').classList.add('listo');
-    document.getElementById('check-j1').classList.add('visible');
-  }
-  if (esJ2 && !eleccionJ2) {
-    eleccionJ2 = mapa[tecla];
-    document.getElementById('display-j2').classList.add('listo');
-    document.getElementById('check-j2').classList.add('visible');
-  }
-
-  if (eleccionJ1 && eleccionJ2) {
-    document.getElementById('mensaje-local').textContent = '¡Revelando!';
-    setTimeout(() => resolverRonda(eleccionJ1, eleccionJ2), 300);
-  } else if (eleccionJ1 && !eleccionJ2) {
-    document.getElementById('mensaje-local').textContent = 'J1 listo ⏳ esperando J2...';
-  } else if (!eleccionJ1 && eleccionJ2) {
-    document.getElementById('mensaje-local').textContent = 'J2 listo ⏳ esperando J1...';
-  }
+  if (esJ1 && !eleccionJ1) { eleccionJ1=mapa[tecla]; document.getElementById('display-j1').classList.add('listo'); document.getElementById('check-j1').classList.add('visible'); }
+  if (esJ2 && !eleccionJ2) { eleccionJ2=mapa[tecla]; document.getElementById('display-j2').classList.add('listo'); document.getElementById('check-j2').classList.add('visible'); }
+  if (eleccionJ1 && eleccionJ2) { document.getElementById('mensaje-local').textContent='¡Revelando!'; setTimeout(() => resolverRonda(eleccionJ1, eleccionJ2), 300); }
+  else if (eleccionJ1) { document.getElementById('mensaje-local').textContent=`${nombreJ1} listo ⏳ esperando ${nombreJ2}...`; }
+  else if (eleccionJ2) { document.getElementById('mensaje-local').textContent=`${nombreJ2} listo ⏳ esperando ${nombreJ1}...`; }
 });
 
-// ═══════════════════════════════
-// UI HELPERS
-// ═══════════════════════════════
 function resetArena() {
-  const dJ1 = document.getElementById('display-j1');
-  const dJ2 = document.getElementById('display-j2');
-  dJ1.className = 'display-emoji esperando';
-  dJ2.className = 'display-emoji esperando';
-  dJ1.childNodes[0].textContent = '❓';
-  dJ2.childNodes[0].textContent = '❓';
+  const dJ1=document.getElementById('display-j1'), dJ2=document.getElementById('display-j2');
+  dJ1.className='display-emoji esperando'; dJ2.className='display-emoji esperando';
+  dJ1.childNodes[0].textContent='❓'; dJ2.childNodes[0].textContent='❓';
   document.getElementById('check-j1').classList.remove('visible');
   document.getElementById('check-j2').classList.remove('visible');
-  document.getElementById('resultado').textContent = '¡Elige tu jugada!';
+  document.getElementById('resultado').textContent='¡Elige tu jugada!';
 }
-
-function actualizarRonda() {
-  document.getElementById('ronda-actual').textContent = rondaActual;
-  document.getElementById('ronda-total').textContent = modoLibre ? '∞' : rondasTotal;
-}
-
-function actualizarMarcadores() {
-  document.getElementById('marcador-v').textContent = puntosJ1;
-  document.getElementById('marcador-e').textContent = empatesTotal;
-  document.getElementById('marcador-d').textContent = puntosJ2;
-}
-
+function actualizarRonda() { document.getElementById('ronda-actual').textContent=rondaActual; document.getElementById('ronda-total').textContent=modoLibre?'∞':rondasTotal; }
+function actualizarMarcadores() { document.getElementById('marcador-v').textContent=puntosJ1; document.getElementById('marcador-e').textContent=empatesTotal; document.getElementById('marcador-d').textContent=puntosJ2; }
 function construirBarras() {
-  const cont = document.getElementById('barras-progreso');
-  cont.innerHTML = '';
-  const cant = modoLibre ? 10 : rondasTotal;
-  for (let i = 0; i < cant; i++) {
-    const d = document.createElement('div');
-    d.className = 'barra-punto';
-    d.id = 'barra-' + i;
-    cont.appendChild(d);
-  }
+  const cont=document.getElementById('barras-progreso'); cont.innerHTML='';
+  const cant=modoLibre?10:rondasTotal;
+  for(let i=0;i<cant;i++){const d=document.createElement('div');d.className='barra-punto';cont.appendChild(d);}
 }
-
 function actualizarBarras() {
-  const barras = document.querySelectorAll('.barra-punto');
-  barras.forEach(b => b.className = 'barra-punto');
-  if (modoLibre) {
-    // En modo libre: alternar colores por victorias
-    let iJ1 = 0, iJ2 = barras.length - 1;
-    for (let i = 0; i < Math.min(puntosJ1, barras.length) && iJ1 <= iJ2; i++, iJ1++) barras[iJ1].classList.add('j1');
-    for (let i = 0; i < Math.min(puntosJ2, barras.length) && iJ2 >= iJ1; i++, iJ2--) barras[iJ2].classList.add('j2');
-    return;
-  }
-  let iJ1 = 0, iJ2 = barras.length - 1;
-  for (let i = 0; i < puntosJ1 && iJ1 <= iJ2; i++, iJ1++) barras[iJ1].classList.add('j1');
-  for (let i = 0; i < puntosJ2 && iJ2 >= iJ1; i++, iJ2--) barras[iJ2].classList.add('j2');
+  const barras=document.querySelectorAll('.barra-punto');
+  barras.forEach(b=>b.className='barra-punto');
+  let iJ1=0, iJ2=barras.length-1;
+  for(let i=0;i<puntosJ1&&iJ1<=iJ2;i++,iJ1++) barras[iJ1].classList.add('j1');
+  for(let i=0;i<puntosJ2&&iJ2>=iJ1;i++,iJ2--) barras[iJ2].classList.add('j2');
 }
-
-function mostrar(id) {
-  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-  document.getElementById(id).classList.add('activa');
-}
-
-function volverInicio() { juegoActivo = false; mostrar('pantalla-inicio'); }
-
-// ═══════════════════════════════
-// GANADOR
-// ═══════════════════════════════
-function terminarLibre() {
-  juegoActivo = false;
-  mostrarGanador();
-}
-
+function mostrar(id) { document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa')); document.getElementById(id).classList.add('activa'); }
+function volverInicio() { juegoActivo=false; mostrar('pantalla-inicio'); }
+function terminarLibre() { juegoActivo=false; mostrarGanador(); }
 function mostrarGanador() {
-  const j1gano = puntosJ1 > puntosJ2;
-  const empate = puntosJ1 === puntosJ2;
-  document.getElementById('trofeo-emoji').textContent = empate ? '🤝' : '🏆';
-  document.getElementById('ganador-titulo').textContent = empate ? '¡Empate técnico!' : j1gano ? `🎉 ¡Gana ${nombreJ1}!` : `🎉 ¡Gana ${nombreJ2}!`;
-  document.getElementById('ganador-sub').textContent = modoLibre ? `Modo libre · ${rondaActual - 1} rondas jugadas` : `Mejor de ${rondasTotal}`;
-  document.getElementById('final-j1').textContent = puntosJ1;
-  document.getElementById('final-j2').textContent = puntosJ2;
-  document.getElementById('final-emp').textContent = empatesTotal;
-  document.getElementById('final-j1-label').textContent = nombreJ1;
-  document.getElementById('final-j2-label').textContent = nombreJ2;
-  if (!empate) lanzarConfetti();
+  const j1gano=puntosJ1>puntosJ2, empate=puntosJ1===puntosJ2;
+  document.getElementById('trofeo-emoji').textContent=empate?'🤝':'🏆';
+  document.getElementById('ganador-titulo').textContent=empate?'¡Empate técnico!':j1gano?`🎉 ¡Gana ${nombreJ1}!`:`🎉 ¡Gana ${nombreJ2}!`;
+  document.getElementById('ganador-sub').textContent=modoLibre?`Modo libre · ${rondaActual-1} rondas jugadas`:`Mejor de ${rondasTotal}`;
+  document.getElementById('final-j1').textContent=puntosJ1;
+  document.getElementById('final-j2').textContent=puntosJ2;
+  document.getElementById('final-emp').textContent=empatesTotal;
+  document.getElementById('final-j1-label').textContent=nombreJ1;
+  document.getElementById('final-j2-label').textContent=nombreJ2;
+  if(!empate) lanzarConfetti();
   mostrar('pantalla-ganador');
 }
-
 function revancha() { iniciarJuego(); }
-
-// ═══════════════════════════════
-// CONFETTI
-// ═══════════════════════════════
 function lanzarConfetti() {
-  const colores = ['#ff2d55','#ff6b95','#ffd166','#7c2d8c','#ff4d00','#6ee7b7'];
-  for (let i = 0; i < 70; i++) {
-    setTimeout(() => {
-      const c = document.createElement('div');
-      c.className = 'confetti-piece';
-      c.style.left = Math.random() * 100 + 'vw';
-      c.style.background = colores[Math.floor(Math.random() * colores.length)];
-      c.style.animationDuration = (1.5 + Math.random() * 2) + 's';
-      c.style.width = (6 + Math.random() * 8) + 'px';
-      c.style.height = (6 + Math.random() * 8) + 'px';
-      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 4000);
-    }, i * 35);
-  }
+  const colores=['#ff2d55','#ff6b95','#ffd166','#7c2d8c','#ff4d00','#6ee7b7'];
+  for(let i=0;i<70;i++){setTimeout(()=>{const c=document.createElement('div');c.className='confetti-piece';c.style.left=Math.random()*100+'vw';c.style.background=colores[Math.floor(Math.random()*colores.length)];c.style.animationDuration=(1.5+Math.random()*2)+'s';c.style.width=(6+Math.random()*8)+'px';c.style.height=(6+Math.random()*8)+'px';c.style.borderRadius=Math.random()>0.5?'50%':'2px';document.body.appendChild(c);setTimeout(()=>c.remove(),4000);},i*35);}
 }
 </script>
 </body>
