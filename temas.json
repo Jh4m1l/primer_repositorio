@@ -1,0 +1,26 @@
+[
+  {
+    "tema": "HTML",
+    "estado": "aprendido",
+    "descripcion": "Estructura de páginas web",
+    "fecha": "2026-02-19"
+  },
+  {
+    "tema": "CSS",
+    "estado": "en progreso",
+    "descripcion": "Estilos y diseño visual",
+    "fecha": ""
+  },
+  {
+    "tema": "JavaScript",
+    "estado": "en progreso",
+    "descripcion": "Lógica e interactividad",
+    "fecha": ""
+  },
+  {
+    "tema": "Git y GitHub",
+    "estado": "aprendido",
+    "descripcion": "Control de versiones",
+    "fecha": "2026-02-20"
+  }
+]

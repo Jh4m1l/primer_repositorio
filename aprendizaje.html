@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mi progreso de aprendizaje</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0c29;
+      color: white;
+      padding: 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 { color: #ff6b95; margin-bottom: 30px; }
+    .tema {
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .info h3 { font-size: 1rem; margin-bottom: 4px; }
+    .info p  { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+    .badge {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .aprendido  { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
+    .en-progreso { background: rgba(255,209,102,0.15); color: #ffd166; border: 1px solid #ffd166; }
+    .pendiente  { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid #555; }
+  </style>
+</head>
+<body>
+  <h1>📚 Mi progreso</h1>
+  <div id="lista"></div>
+
+  <script>
+    fetch('temas.json')
+      .then(r => r.json())
+      .then(temas => {
+        const lista = document.getElementById('lista');
+        temas.forEach(t => {
+          const claseEstado = t.estado.replace(' ', '-');
+          lista.innerHTML += `
+            <div class="tema">
+              <div class="info">
+                <h3>${t.tema}</h3>
+                <p>${t.descripcion}</p>
+              </div>
+              <span class="badge ${claseEstado}">${t.estado}</span>
+            </div>
+          `;
+        });
+      });
+  </script>
+</body>
+</html>
