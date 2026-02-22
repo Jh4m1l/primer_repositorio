@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Piedra, Papel o Tijera 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --rojo: #ff2d55; --rosa: #ff6b95; --morado: #7c2d8c; --dorado: #ffd166; --negro: #0a0007; --gris: #1a0a14; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--negro);
+    color: white;
+    touch-action: manipulation;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124,45,140,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(255,45,85,0.2) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ══ PANTALLAS ══ */
+  .pantalla { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100vh; position: relative; z-index: 1; padding: 20px; overflow-y: auto; }
+  .pantalla.activa { display: flex; }
+
+  /* ══ INICIO ══ */
+  .logo { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; background: linear-gradient(135deg, #fff 0%, var(--rosa) 50%, var(--dorado) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; line-height: 1.1; margin-bottom: 4px; }
+  .logo-sub { color: rgba(255,255,255,0.4); font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+  .seccion-label { font-size: 0.65rem; letter-spacing: 4px; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 10px; align-self: flex-start; width: 100%; max-width: 420px; }
+
+  .niveles { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 420px; margin-bottom: 20px; }
+  .card-nivel { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
+  .card-nivel::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.25s; }
+  .card-nivel.nivel-1::before { background: linear-gradient(120deg, rgba(255,107,149,0.12), transparent); }
+  .card-nivel.nivel-2::before { background: linear-gradient(120deg, rgba(255,45,85,0.18), transparent); }
+  .card-nivel.nivel-3::before { background: linear-gradient(120deg, rgba(255,77,0,0.22), transparent); }
+  .card-nivel.nivel-4::before { background: linear-gradient(120deg, rgba(150,0,255,0.18), transparent); }
+  .card-nivel:active::before, .card-nivel.activo::before { opacity: 1; }
+  .card-nivel.activo { border-color: var(--rojo); box-shadow: 0 0 20px rgba(255,45,85,0.2); }
+  .nivel-icono { font-size: 1.5rem; flex-shrink: 0; }
+  .nivel-texto h3 { font-size: 0.88rem; font-weight: 600; margin-bottom: 1px; }
+  .nivel-texto p { font-size: 0.7rem; color: rgba(255,255,255,0.45); }
+  .nivel-badge { margin-left: auto; font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 1px; flex-shrink: 0; }
+  .badge-1 { background: rgba(255,107,149,0.2); color: var(--rosa); border: 1px solid rgba(255,107,149,0.3); }
+  .badge-2 { background: rgba(255,45,85,0.2); color: #ff6060; border: 1px solid rgba(255,45,85,0.3); }
+  .badge-3 { background: rgba(255,77,0,0.2); color: var(--dorado); border: 1px solid rgba(255,77,0,0.3); }
+  .badge-4 { background: rgba(150,0,255,0.2); color: #d580ff; border: 1px solid rgba(150,0,255,0.3); }
+
+  .nombres-grid { display: flex; gap: 8px; width: 100%; max-width: 420px; margin-bottom: 16px; }
+  .input-nombre { flex: 1; padding: 11px 14px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; outline: none; transition: all 0.2s; text-align: center; }
+  .input-nombre::placeholder { color: rgba(255,255,255,0.25); }
+  .input-nombre:focus { border-color: var(--rojo); background: rgba(255,45,85,0.07); }
+
+  .rondas-grid { display: flex; gap: 8px; width: 100%; max-width: 420px; margin-bottom: 24px; }
+  .btn-ronda { flex: 1; padding: 12px 6px; background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 12px; color: rgba(255,255,255,0.6); font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; line-height: 1.3; }
+  .btn-ronda:active, .btn-ronda.sel { border-color: var(--rojo); color: white; background: rgba(255,45,85,0.12); }
+  .btn-libre { border-color: rgba(255,209,102,0.3) !important; color: var(--dorado) !important; }
+  .btn-libre.sel { border-color: var(--dorado) !important; background: rgba(255,209,102,0.12) !important; }
+
+  .btn-jugar { width: 100%; max-width: 420px; padding: 16px; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; letter-spacing: 2px; transition: all 0.25s; box-shadow: 0 6px 30px rgba(255,45,85,0.35); }
+  .btn-jugar:active { transform: scale(0.97); }
+
+  /* ══ JUEGO MÓVIL - PANTALLA DIVIDIDA ══ */
+  #pantalla-juego {
+    padding: 0;
+    flex-direction: column;
+    justify-content: stretch;
+  }
+
+  /* Zona J2 - arriba (rotada) */
+  .zona-j2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(180deg);
+    padding: 20px 16px;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,45,85,0.03);
+    gap: 12px;
+  }
+
+  /* Zona central - info */
+  .zona-central {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    gap: 6px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    min-height: 80px;
+  }
+
+  /* Zona J1 - abajo (normal) */
+  .zona-j1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    gap: 12px;
+    background: rgba(110,231,183,0.03);
+  }
+
+  .zona-nombre {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .zona-display {
+    font-size: 3.5rem;
+    width: 90px; height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.04);
+    border-radius: 22px;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .zona-display.esperando { opacity: 0.3; }
+  .zona-display.listo { border-color: #6ee7b7; box-shadow: 0 0 20px rgba(110,231,183,0.3); opacity: 1; }
+  .zona-display.ganaste { border-color: #6ee7b7; box-shadow: 0 0 25px rgba(110,231,183,0.5); animation: pulso 0.5s ease; }
+  .zona-display.perdiste { border-color: var(--rojo); box-shadow: 0 0 25px rgba(255,45,85,0.5); animation: temblor 0.4s ease; }
+  .zona-display.empate { border-color: var(--dorado); box-shadow: 0 0 20px rgba(255,209,102,0.3); }
+
+  .check-zona {
+    position: absolute; top: -8px; right: -8px;
+    background: #6ee7b7; color: #000;
+    border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: bold;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .check-zona.visible { opacity: 1; }
+
+  /* Botones de jugada */
+  .botones-zona {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-jugada {
+    font-size: 1.8rem;
+    width: 72px; height: 72px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-jugada:active {
+    transform: scale(0.88);
+    background: rgba(255,45,85,0.25);
+    border-color: var(--rojo);
+    box-shadow: 0 0 20px rgba(255,45,85,0.4);
+  }
+
+  .btn-jugada.elegido {
+    background: rgba(110,231,183,0.15);
+    border-color: #6ee7b7;
+  }
+
+  /* Info central */
+  .central-ronda { font-size: 0.7rem; color: rgba(255,255,255,0.35); letter-spacing: 2px; }
+  .central-ronda span { color: white; font-weight: 700; }
+  .central-resultado { font-size: 0.95rem; text-align: center; min-height: 22px; }
+  .central-marcador { display: flex; gap: 12px; align-items: center; }
+  .marc-item { text-align: center; }
+  .marc-item .n { font-size: 1.2rem; font-weight: 700; }
+  .marc-item .l { font-size: 0.6rem; color: rgba(255,255,255,0.35); }
+  .marc-j1 .n { color: #6ee7b7; }
+  .marc-j2 .n { color: var(--rojo); }
+  .marc-emp .n { color: var(--dorado); }
+  .marc-sep { color: rgba(255,255,255,0.15); font-size: 0.8rem; }
+
+  /* Mensaje de espera */
+  .zona-mensaje {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+  }
+
+  /* Nivel badge en juego */
+  .nivel-indicator { display: inline-flex; align-items: center; gap: 5px; font-size: 0.65rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 1px; border: 1px solid; }
+  .ni-1 { background: rgba(255,107,149,0.12); color: var(--rosa); border-color: rgba(255,107,149,0.25); }
+  .ni-2 { background: rgba(255,45,85,0.15); color: #ff7070; border-color: rgba(255,45,85,0.3); }
+  .ni-3 { background: rgba(255,77,0,0.15); color: var(--dorado); border-color: rgba(255,77,0,0.3); }
+  .ni-4 { background: rgba(150,0,255,0.12); color: #d580ff; border-color: rgba(150,0,255,0.25); }
+
+  /* Botón volver */
+  .btn-volver-central {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ══ OVERLAY DARE ══ */
+  .overlay-dare { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); }
+  .overlay-dare.visible { display: flex; }
+  .dare-card { max-width: 380px; width: 100%; background: var(--gris); border-radius: 28px; padding: 30px 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1); animation: aparecer 0.4s cubic-bezier(.17,.67,.35,1.3); box-shadow: 0 20px 80px rgba(255,45,85,0.3); }
+  .dare-nivel-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.62rem; padding: 3px 12px; border-radius: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; border: 1px solid; }
+  .dnb-1 { background: rgba(255,107,149,0.1); color: var(--rosa); border-color: rgba(255,107,149,0.2); }
+  .dnb-2 { background: rgba(255,45,85,0.15); color: #ff7070; border-color: rgba(255,45,85,0.25); }
+  .dnb-3 { background: rgba(255,77,0,0.12); color: var(--dorado); border-color: rgba(255,77,0,0.25); }
+  .dnb-4 { background: rgba(150,0,255,0.12); color: #d580ff; border-color: rgba(150,0,255,0.2); }
+  .dare-perdedor { font-size: 0.78rem; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+  .dare-perdedor span { color: var(--rosa); font-weight: 600; }
+  .dare-emoji-grande { font-size: 2.8rem; margin-bottom: 12px; display: block; }
+  .dare-titulo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+  .dare-descripcion { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 24px; }
+  .btn-cumplido { width: 100%; padding: 14px; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 25px rgba(255,45,85,0.35); }
+  .btn-cumplido:active { transform: scale(0.97); }
+  .dare-skip { margin-top: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.25); cursor: pointer; }
+
+  /* ══ GANADOR ══ */
+  .trofeo { font-size: 4.5rem; margin-bottom: 12px; animation: aparecer 0.5s ease; }
+  .ganador-titulo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; text-align: center; }
+  .ganador-sub { color: rgba(255,255,255,0.35); margin-bottom: 28px; font-size: 0.85rem; }
+  .stats-finales { display: flex; gap: 12px; margin-bottom: 28px; }
+  .stat-final { text-align: center; background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px 18px; border: 1px solid rgba(255,255,255,0.08); }
+  .stat-final .n { font-size: 1.8rem; font-weight: 700; }
+  .stat-final .l { font-size: 0.68rem; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .btns-final { display: flex; gap: 10px; }
+  .btn-revancha { padding: 13px 26px; font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; background: linear-gradient(135deg, var(--rojo), var(--morado)); border: none; border-radius: 50px; color: white; cursor: pointer; }
+  .btn-menu { padding: 13px 26px; font-size: 0.95rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 50px; color: rgba(255,255,255,0.7); cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+  /* Cargando */
+  .cargando { position: fixed; inset: 0; background: var(--negro); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 200; transition: opacity 0.4s; }
+  .cargando.oculto { opacity: 0; pointer-events: none; }
+  .spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--rosa); border-radius: 50%; animation: girar 0.8s linear infinite; }
+
+  .btn-terminar-libre { margin-top: 4px; padding: 6px 18px; font-size: 0.72rem; background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.25); border-radius: 30px; color: var(--dorado); cursor: pointer; font-family: 'DM Sans', sans-serif; display: none; }
+  .btn-terminar-libre.visible { display: inline-block; }
+
+  @keyframes girar { to { transform: rotate(360deg); } }
+  @keyframes pulso { 0%,100%{transform:scale(1)} 50%{transform:scale(1.22)} }
+  @keyframes temblor { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+  @keyframes aparecer { from{opacity:0;transform:translateY(-18px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+  .confetti-piece { position:fixed;width:10px;height:10px;top:-20px;border-radius:2px;animation:confetti-fall linear forwards;pointer-events:none;z-index:999; }
+  @keyframes confetti-fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+</style>
+</head>
+<body>
+
+<!-- Cargando -->
+<div class="cargando" id="cargando">
+  <div class="spinner"></div>
+  <div style="color:rgba(255,255,255,0.4);font-size:0.85rem">Cargando...</div>
+</div>
+
+<!-- OVERLAY DARE -->
+<div class="overlay-dare" id="overlay-dare">
+  <div class="dare-card">
+    <div class="dare-nivel-badge" id="dare-badge">💋 SEXI</div>
+    <div class="dare-perdedor">¡<span id="dare-perdedor-nombre">Jugador</span> perdió!</div>
+    <div class="dare-emoji-grande" id="dare-emoji">💋</div>
+    <div class="dare-titulo" id="dare-titulo">Tu castigo</div>
+    <div class="dare-descripcion" id="dare-descripcion">...</div>
+    <button class="btn-cumplido" onclick="cerrarDare()">✓ ¡Hecho! Siguiente</button>
+    <div class="dare-skip" onclick="cerrarDare()">Saltar</div>
+  </div>
+</div>
+
+<!-- ══ INICIO ══ -->
+<div class="pantalla activa" id="pantalla-inicio">
+  <div class="logo">🔥 Piedra, Papel<br>o Tijera</div>
+  <p class="logo-sub">Edición para parejas</p>
+
+  <p class="seccion-label">Nivel de calor</p>
+  <div class="niveles">
+    <div class="card-nivel nivel-1 activo" id="card-1" onclick="seleccionarNivel(1)">
+      <span class="nivel-icono">💋</span>
+      <div class="nivel-texto"><h3>Sexi</h3><p>Coqueteo suave, besos y caricias</p></div>
+      <span class="nivel-badge badge-1">SUAVE</span>
+    </div>
+    <div class="card-nivel nivel-2" id="card-2" onclick="seleccionarNivel(2)">
+      <span class="nivel-icono">🔥</span>
+      <div class="nivel-texto"><h3>Ardiente</h3><p>Mucho más atrevido y explícito</p></div>
+      <span class="nivel-badge badge-2">PICANTE</span>
+    </div>
+    <div class="card-nivel nivel-3" id="card-3" onclick="seleccionarNivel(3)">
+      <span class="nivel-icono">🌶️</span>
+      <div class="nivel-texto"><h3>Fuego total</h3><p>Sin filtros, solo para atrevidos</p></div>
+      <span class="nivel-badge badge-3">EXPLOSIVO</span>
+    </div>
+    <div class="card-nivel nivel-4" id="card-4" onclick="seleccionarNivel(4)">
+      <span class="nivel-icono">💀</span>
+      <div class="nivel-texto"><h3>Hardcore — Grupo</h3><p>Para 3+ personas. Sin límites.</p></div>
+      <span class="nivel-badge badge-4">GRUPERO</span>
+    </div>
+  </div>
+
+  <p class="seccion-label">Nombres</p>
+  <div class="nombres-grid">
+    <input class="input-nombre" id="input-j1" type="text" placeholder="Jugador 1" maxlength="12" />
+    <input class="input-nombre" id="input-j2" type="text" placeholder="Jugador 2" maxlength="12" />
+  </div>
+
+  <p class="seccion-label">Rondas</p>
+  <div class="rondas-grid">
+    <button class="btn-ronda sel" onclick="seleccionarRondas(3,this)">Mejor<br>de 3</button>
+    <button class="btn-ronda" onclick="seleccionarRondas(5,this)">Mejor<br>de 5</button>
+    <button class="btn-ronda" onclick="seleccionarRondas(7,this)">Mejor<br>de 7</button>
+    <button class="btn-ronda btn-libre" onclick="seleccionarRondas(0,this)">♾️<br>Libre</button>
+  </div>
+
+  <button class="btn-jugar" onclick="iniciarJuego()">🔥 EMPEZAR</button>
+</div>
+
+<!-- ══ JUEGO (pantalla dividida) ══ -->
+<div class="pantalla" id="pantalla-juego">
+
+  <!-- ZONA J2 (arriba, rotada 180°) -->
+  <div class="zona-j2">
+    <div class="zona-nombre" id="nombre-j2-zona">Jugador 2</div>
+    <div class="zona-display esperando" id="display-j2">
+      ❓
+      <div class="check-zona" id="check-j2">✓</div>
+    </div>
+    <div class="botones-zona">
+      <button class="btn-jugada" ontouchstart="elegirJ2('piedra')" onclick="elegirJ2('piedra')" id="btn-j2-piedra">🏔️</button>
+      <button class="btn-jugada" ontouchstart="elegirJ2('papel')"  onclick="elegirJ2('papel')"  id="btn-j2-papel">📄</button>
+      <button class="btn-jugada" ontouchstart="elegirJ2('tijera')" onclick="elegirJ2('tijera')" id="btn-j2-tijera">✂️</button>
+    </div>
+    <div class="zona-mensaje" id="msg-j2">Elegí en secreto 👆</div>
+  </div>
+
+  <!-- ZONA CENTRAL -->
+  <div class="zona-central">
+    <div style="display:flex;align-items:center;gap:10px;justify-content:center;width:100%">
+      <button class="btn-volver-central" onclick="volverInicio()">← Menú</button>
+      <div class="central-ronda">Ronda <span id="ronda-actual">1</span>/<span id="ronda-total">3</span></div>
+      <div class="nivel-indicator" id="nivel-indicator">💋 SEXI</div>
+      <button class="btn-terminar-libre" id="btn-terminar" onclick="terminarLibre()">⛳ Fin</button>
+    </div>
+    <div class="central-resultado" id="resultado">¡Cada uno elige en secreto!</div>
+    <div class="central-marcador">
+      <div class="marc-item marc-j1"><div class="n" id="marc-v">0</div><div class="l" id="marc-v-label">J1</div></div>
+      <div class="marc-sep">·</div>
+      <div class="marc-item marc-emp"><div class="n" id="marc-e">0</div><div class="l">Emp</div></div>
+      <div class="marc-sep">·</div>
+      <div class="marc-item marc-j2"><div class="n" id="marc-d">0</div><div class="l" id="marc-d-label">J2</div></div>
+    </div>
+  </div>
+
+  <!-- ZONA J1 (abajo, normal) -->
+  <div class="zona-j1">
+    <div class="zona-nombre" id="nombre-j1-zona">Jugador 1</div>
+    <div class="zona-display esperando" id="display-j1">
+      ❓
+      <div class="check-zona" id="check-j1">✓</div>
+    </div>
+    <div class="botones-zona">
+      <button class="btn-jugada" ontouchstart="elegirJ1('piedra')" onclick="elegirJ1('piedra')" id="btn-j1-piedra">🏔️</button>
+      <button class="btn-jugada" ontouchstart="elegirJ1('papel')"  onclick="elegirJ1('papel')"  id="btn-j1-papel">📄</button>
+      <button class="btn-jugada" ontouchstart="elegirJ1('tijera')" onclick="elegirJ1('tijera')" id="btn-j1-tijera">✂️</button>
+    </div>
+    <div class="zona-mensaje" id="msg-j1">Elegí en secreto 👇</div>
+  </div>
+
+</div>
+
+<!-- ══ GANADOR ══ -->
+<div class="pantalla" id="pantalla-ganador">
+  <div class="trofeo" id="trofeo-emoji">🏆</div>
+  <div class="ganador-titulo" id="ganador-titulo">¡Ganaste!</div>
+  <div class="ganador-sub" id="ganador-sub">Mejor de 3</div>
+  <div class="stats-finales">
+    <div class="stat-final"><div class="n" id="final-j1" style="color:#6ee7b7">0</div><div class="l" id="final-j1-label">J1</div></div>
+    <div class="stat-final"><div class="n" id="final-emp" style="color:var(--dorado)">0</div><div class="l">Empates</div></div>
+    <div class="stat-final"><div class="n" id="final-j2" style="color:var(--rojo)">0</div><div class="l" id="final-j2-label">J2</div></div>
+  </div>
+  <div class="btns-final">
+    <button class="btn-revancha" onclick="revancha()">🔁 Revancha</button>
+    <button class="btn-menu" onclick="volverInicio()">🏠 Menú</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// CARGAR CASTIGOS
+// ═══════════════════════════════
+let daresBase = {};
+let colasDares = {};
+
+fetch('castigos.json')
+  .then(r => r.json())
+  .then(data => { daresBase = data; ocultarCargando(); })
+  .catch(() => { alert('No se pudo cargar castigos.json'); ocultarCargando(); });
+
+function ocultarCargando() {
+  const c = document.getElementById('cargando');
+  c.classList.add('oculto');
+  setTimeout(() => c.remove(), 500);
+}
+
+function getDare(n) {
+  const key = String(n);
+  if (!colasDares[key] || colasDares[key].length === 0) {
+    const copia = [...daresBase[key]];
+    for (let i = copia.length-1; i>0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [copia[i],copia[j]] = [copia[j],copia[i]];
+    }
+    colasDares[key] = copia;
+  }
+  return colasDares[key].pop();
+}
+
+// ═══════════════════════════════
+// ESTADO
+// ═══════════════════════════════
+let nivel=1, rondasTotal=3, rondasNecesarias=2, modoLibre=false;
+let puntosJ1=0, puntosJ2=0, empatesTotal=0, rondaActual=1;
+let juegoActivo=true, pendienteDare=null;
+let eleccionJ1=null, eleccionJ2=null;
+let nombreJ1='Jugador 1', nombreJ2='Jugador 2';
+
+const emojis = { piedra:'🏔️', papel:'📄', tijera:'✂️' };
+const ganaNormal = { piedra:'tijera', tijera:'papel', papel:'piedra' };
+const nivelConfig = {
+  1:{ label:'💋 SEXI', clase:'ni-1', badgeClase:'dnb-1', badgeLabel:'💋 SEXI' },
+  2:{ label:'🔥 ARDIENTE', clase:'ni-2', badgeClase:'dnb-2', badgeLabel:'🔥 ARDIENTE' },
+  3:{ label:'🌶️ FUEGO', clase:'ni-3', badgeClase:'dnb-3', badgeLabel:'🌶️ FUEGO' },
+  4:{ label:'💀 HARDCORE', clase:'ni-4', badgeClase:'dnb-4', badgeLabel:'💀 HARDCORE' },
+};
+
+// ═══════════════════════════════
+// MENÚ
+// ═══════════════════════════════
+function seleccionarNivel(n) {
+  nivel = n;
+  [1,2,3,4].forEach(i => { const el=document.getElementById('card-'+i); if(el) el.classList.toggle('activo',i===n); });
+}
+
+function seleccionarRondas(n, btn) {
+  rondasTotal=n; modoLibre=n===0;
+  rondasNecesarias = modoLibre ? Infinity : Math.ceil(n/2);
+  document.querySelectorAll('.btn-ronda').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function iniciarJuego() {
+  puntosJ1=0; puntosJ2=0; empatesTotal=0; rondaActual=1;
+  eleccionJ1=null; eleccionJ2=null; juegoActivo=true;
+
+  nombreJ1 = document.getElementById('input-j1').value.trim() || 'Jugador 1';
+  nombreJ2 = document.getElementById('input-j2').value.trim() || 'Jugador 2';
+
+  document.getElementById('nombre-j1-zona').textContent = nombreJ1;
+  document.getElementById('nombre-j2-zona').textContent = nombreJ2;
+  document.getElementById('marc-v-label').textContent = nombreJ1;
+  document.getElementById('marc-d-label').textContent = nombreJ2;
+
+  const cfg = nivelConfig[nivel];
+  const ni = document.getElementById('nivel-indicator');
+  ni.textContent = cfg.label; ni.className = 'nivel-indicator ' + cfg.clase;
+
+  document.getElementById('btn-terminar').classList.toggle('visible', modoLibre);
+
+  actualizarRonda();
+  resetArena();
+  mostrar('pantalla-juego');
+}
+
+// ═══════════════════════════════
+// ELECCIONES TÁCTILES
+// ═══════════════════════════════
+function elegirJ1(opcion) {
+  if (!juegoActivo || eleccionJ1) return;
+  eleccionJ1 = opcion;
+  document.getElementById('display-j1').classList.remove('esperando');
+  document.getElementById('display-j1').classList.add('listo');
+  document.getElementById('check-j1').classList.add('visible');
+  document.getElementById('msg-j1').textContent = '✓ Listo!';
+  ['piedra','papel','tijera'].forEach(o => {
+    document.getElementById('btn-j1-'+o).style.opacity = o===opcion ? '1' : '0.3';
+  });
+  verificarAmbos();
+}
+
+function elegirJ2(opcion) {
+  if (!juegoActivo || eleccionJ2) return;
+  eleccionJ2 = opcion;
+  document.getElementById('display-j2').classList.remove('esperando');
+  document.getElementById('display-j2').classList.add('listo');
+  document.getElementById('check-j2').classList.add('visible');
+  document.getElementById('msg-j2').textContent = '✓ Listo!';
+  ['piedra','papel','tijera'].forEach(o => {
+    document.getElementById('btn-j2-'+o).style.opacity = o===opcion ? '1' : '0.3';
+  });
+  verificarAmbos();
+}
+
+function verificarAmbos() {
+  if (eleccionJ1 && eleccionJ2) {
+    document.getElementById('resultado').textContent = '¡Revelando!';
+    setTimeout(() => resolverRonda(eleccionJ1, eleccionJ2), 600);
+  } else if (eleccionJ1) {
+    document.getElementById('resultado').textContent = `${nombreJ1} listo ⏳ esperando ${nombreJ2}...`;
+  } else if (eleccionJ2) {
+    document.getElementById('resultado').textContent = `${nombreJ2} listo ⏳ esperando ${nombreJ1}...`;
+  }
+}
+
+// ═══════════════════════════════
+// LÓGICA
+// ═══════════════════════════════
+function determinarResultado(j1, j2) {
+  if (j1===j2) return 'empate';
+  return ganaNormal[j1]===j2 ? 'j1' : 'j2';
+}
+
+function resolverRonda(j1, j2) {
+  if (!juegoActivo) return;
+  const res = determinarResultado(j1, j2);
+  const dJ1 = document.getElementById('display-j1');
+  const dJ2 = document.getElementById('display-j2');
+
+  dJ1.className = 'zona-display';
+  dJ2.className = 'zona-display';
+  dJ1.childNodes[0].textContent = emojis[j1];
+  dJ2.childNodes[0].textContent = emojis[j2];
+
+  let msg='', perdedor=null;
+
+  if (res==='empate') {
+    msg='🤝 ¡Empate!'; empatesTotal++;
+    dJ1.classList.add('empate'); dJ2.classList.add('empate');
+  } else if (res==='j1') {
+    msg=`🎉 Gana ${nombreJ1}!`; puntosJ1++;
+    dJ1.classList.add('ganaste'); dJ2.classList.add('perdiste'); perdedor=nombreJ2;
+  } else {
+    msg=`🎉 Gana ${nombreJ2}!`; puntosJ2++;
+    dJ1.classList.add('perdiste'); dJ2.classList.add('ganaste'); perdedor=nombreJ1;
+  }
+
+  document.getElementById('resultado').textContent = msg;
+  actualizarMarcadores();
+  eleccionJ1=null; eleccionJ2=null;
+
+  const serieTermino = !modoLibre && (puntosJ1>=rondasNecesarias || puntosJ2>=rondasNecesarias);
+
+  if (perdedor) {
+    setTimeout(() => mostrarDare(perdedor, serieTermino), 600);
+  } else {
+    if (!serieTermino) {
+      rondaActual++; actualizarRonda();
+      setTimeout(() => resetArena(), 1000);
+    } else {
+      juegoActivo=false;
+      setTimeout(mostrarGanador, 1000);
+    }
+  }
+}
+
+// ═══════════════════════════════
+// DARE
+// ═══════════════════════════════
+function mostrarDare(perdedorNombre, serieTerminaDespues) {
+  const dare = getDare(nivel);
+  const cfg = nivelConfig[nivel];
+  const badge = document.getElementById('dare-badge');
+  badge.textContent = cfg.badgeLabel; badge.className = 'dare-nivel-badge ' + cfg.badgeClase;
+  document.getElementById('dare-perdedor-nombre').textContent = perdedorNombre;
+  document.getElementById('dare-emoji').textContent = dare.emoji;
+  document.getElementById('dare-titulo').textContent = dare.titulo;
+  document.getElementById('dare-descripcion').textContent = dare.desc;
+  pendienteDare = { serieTermina: serieTerminaDespues };
+  document.getElementById('overlay-dare').classList.add('visible');
+}
+
+function cerrarDare() {
+  document.getElementById('overlay-dare').classList.remove('visible');
+  const { serieTermina } = pendienteDare; pendienteDare=null;
+  if (serieTermina) { juegoActivo=false; setTimeout(mostrarGanador,300); }
+  else { rondaActual++; actualizarRonda(); setTimeout(resetArena,200); }
+}
+
+// ═══════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════
+function resetArena() {
+  const dJ1=document.getElementById('display-j1');
+  const dJ2=document.getElementById('display-j2');
+  dJ1.className='zona-display esperando'; dJ2.className='zona-display esperando';
+  dJ1.childNodes[0].textContent='❓'; dJ2.childNodes[0].textContent='❓';
+  document.getElementById('check-j1').classList.remove('visible');
+  document.getElementById('check-j2').classList.remove('visible');
+  document.getElementById('msg-j1').textContent='Elegí en secreto 👇';
+  document.getElementById('msg-j2').textContent='Elegí en secreto 👆';
+  document.getElementById('resultado').textContent='¡Cada uno elige en secreto!';
+  ['piedra','papel','tijera'].forEach(o => {
+    document.getElementById('btn-j1-'+o).style.opacity='1';
+    document.getElementById('btn-j2-'+o).style.opacity='1';
+  });
+}
+
+function actualizarRonda() {
+  document.getElementById('ronda-actual').textContent = rondaActual;
+  document.getElementById('ronda-total').textContent = modoLibre ? '∞' : rondasTotal;
+}
+
+function actualizarMarcadores() {
+  document.getElementById('marc-v').textContent=puntosJ1;
+  document.getElementById('marc-e').textContent=empatesTotal;
+  document.getElementById('marc-d').textContent=puntosJ2;
+}
+
+function mostrar(id) {
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+  document.getElementById(id).classList.add('activa');
+}
+
+function volverInicio() { juegoActivo=false; mostrar('pantalla-inicio'); }
+function terminarLibre() { juegoActivo=false; mostrarGanador(); }
+
+function mostrarGanador() {
+  const j1gano=puntosJ1>puntosJ2, empate=puntosJ1===puntosJ2;
+  document.getElementById('trofeo-emoji').textContent=empate?'🤝':'🏆';
+  document.getElementById('ganador-titulo').textContent=empate?'¡Empate técnico!':j1gano?`🎉 ¡Gana ${nombreJ1}!`:`🎉 ¡Gana ${nombreJ2}!`;
+  document.getElementById('ganador-sub').textContent=modoLibre?`Modo libre`:`Mejor de ${rondasTotal}`;
+  document.getElementById('final-j1').textContent=puntosJ1;
+  document.getElementById('final-j2').textContent=puntosJ2;
+  document.getElementById('final-emp').textContent=empatesTotal;
+  document.getElementById('final-j1-label').textContent=nombreJ1;
+  document.getElementById('final-j2-label').textContent=nombreJ2;
+  if(!empate) lanzarConfetti();
+  mostrar('pantalla-ganador');
+}
+
+function revancha() { iniciarJuego(); }
+
+function lanzarConfetti() {
+  const colores=['#ff2d55','#ff6b95','#ffd166','#7c2d8c','#ff4d00','#6ee7b7'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti-piece';
+      c.style.left=Math.random()*100+'vw';
+      c.style.background=colores[Math.floor(Math.random()*colores.length)];
+      c.style.animationDuration=(1.5+Math.random()*2)+'s';
+      c.style.width=(6+Math.random()*8)+'px';
+      c.style.height=(6+Math.random()*8)+'px';
+      c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),4000);
+    },i*35);
+  }
+}
+</script>
+</body>
+</html>
